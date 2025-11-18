@@ -28,11 +28,9 @@ public class Phong {
     @JoinColumn(name = "loaiPhongId", nullable = false)
     private LoaiPhong loaiPhong;
 
-    @OneToMany
-    @JoinColumn(name = "chiTietDatPhongId")
+    @OneToMany(mappedBy = "phong")
     private List<ChiTietDatPhong> chiTietDatPhongs;
 
-    @OneToMany
-    @JoinColumn(name = "baiDangPhongId")
+    @OneToMany(mappedBy = "phong")
     private List<BaiDangPhong> baiDangPhongs;
 }

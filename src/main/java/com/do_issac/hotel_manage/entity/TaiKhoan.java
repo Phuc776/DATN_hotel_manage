@@ -34,8 +34,7 @@ public class TaiKhoan {
 
     private boolean trangThai;
 
-    @OneToMany
-    @JoinColumn(name = "thongBaoId")
+    @OneToMany(mappedBy = "taiKhoan", cascade = CascadeType.ALL)
     private List<ThongBao> thongBaos;
 
     @OneToOne
@@ -46,12 +45,10 @@ public class TaiKhoan {
     @JoinColumn(name = "khachHangId")
     private KhachHang khachHang;
 
-    @OneToMany
-    @JoinColumn(name = "khachSanId")
+    @OneToMany(mappedBy = "chuKhachSan")
     private List<KhachSan> khachSans;
 
-    @OneToMany
-    @JoinColumn(name = "baiDangId")
+    @OneToMany(mappedBy = "chuKhachSan")
     private List<BaiDangPhong> baiDangs;
 
 }

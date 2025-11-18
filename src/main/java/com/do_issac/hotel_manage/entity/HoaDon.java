@@ -26,7 +26,6 @@ public class HoaDon {
     @JoinColumn(name = "datPhongId")
     private ChiTietDatPhong datPhong;
 
-    @OneToMany
-    @JoinColumn(name = "chiTietHoaDonId")
+    @OneToMany(mappedBy = "hoaDon")
     private List<ChiTietHoaDon> chiTietHoaDons;
 }

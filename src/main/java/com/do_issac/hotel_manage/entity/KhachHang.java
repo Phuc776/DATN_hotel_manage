@@ -36,11 +36,9 @@ public class KhachHang {
     @JoinColumn(name = "taiKhoanId", nullable = false)
     private TaiKhoan taiKhoan;
 
-    @OneToMany
-    @JoinColumn(name = "chiTietDatPhongId")
+    @OneToMany(mappedBy = "khachHang")
     private List<ChiTietDatPhong> chiTietDatPhongs;
 
-    @OneToMany
-    @JoinColumn(name = "danhGiaId")
+    @OneToMany(mappedBy = "khachHang")
     private List<DanhGia> danhGias;
 }

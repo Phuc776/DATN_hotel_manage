@@ -20,19 +20,19 @@ public class KhachSan {
     private String tenKhachSan;
     private String diaChi;
 
+    @Enumerated(EnumType.STRING)
+    private TrangThaiKhachSan trangThai = TrangThaiKhachSan.CHO_DUYET;
+
     @ManyToOne
     @JoinColumn(name = "taiKhoanId", nullable = false)
     private TaiKhoan chuKhachSan;
 
-    @OneToMany
-    @JoinColumn(name = "phongId")
+    @OneToMany(mappedBy = "khachSan", cascade = CascadeType.ALL)
     private List<Phong> phongs;
 
-    @OneToMany
-    @JoinColumn(name = "nhanVienId")
+    @OneToMany(mappedBy = "khachSan", cascade = CascadeType.ALL)
     private List<NhanVien> nhanViens;
 
-    @OneToMany
-    @JoinColumn(name = "danhGiaId")
+    @OneToMany(mappedBy = "khachSan", cascade = CascadeType.ALL)
     private List<DanhGia> danhGias;
 }

@@ -24,11 +24,9 @@ public class LoaiPhong {
     private int soNguoiLon;
     private int soTreEm;
 
-    @OneToMany
-    @JoinColumn(name = "chiTietHoaDonId")
+    @OneToMany(mappedBy = "loaiPhong")
     private List<ChiTietHoaDon> chiTietHoaDons;
 
-    @OneToMany
-    @JoinColumn(name = "phongId")
+    @OneToMany(mappedBy = "loaiPhong")
     private List<Phong> phongs;
 }

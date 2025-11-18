@@ -21,7 +21,6 @@ public class DichVu {
     private double donGia;
     private String moTa;
 
-    @OneToMany
-    @JoinColumn(name = "chiTietHoaDonId")
+    @OneToMany(mappedBy = "dichVu")
     private List<ChiTietHoaDon> chiTietHoaDons;
 }

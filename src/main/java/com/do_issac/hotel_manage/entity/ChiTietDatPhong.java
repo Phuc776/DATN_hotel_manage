@@ -37,15 +37,13 @@ public class ChiTietDatPhong {
     @JoinColumn(name = "khachHangId", nullable = false)
     private KhachHang khachHang;
 
-    @OneToMany
-    @JoinColumn(name = "thanhToanId")
+    @OneToMany(mappedBy = "datPhong")
     private List<ThanhToan> thanhToans;
 
     @OneToOne
     @JoinColumn(name = "hoaDonId")
     private HoaDon hoaDon;
 
-    @OneToMany
-    @JoinColumn(name = "qrID")
+    @OneToMany(mappedBy = "datPhong")
     private List<QrKhoaPhong> qrs;
 }
