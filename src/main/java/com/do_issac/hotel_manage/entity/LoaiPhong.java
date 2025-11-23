@@ -29,4 +29,7 @@ public class LoaiPhong {
 
     @OneToMany(mappedBy = "loaiPhong")
     private List<Phong> phongs;
+
+    @ManyToMany(mappedBy = "loaiPhongs")
+    private List<KhachSan> khachSans;
 }

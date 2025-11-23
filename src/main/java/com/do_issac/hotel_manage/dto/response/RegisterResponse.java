@@ -1,4 +1,4 @@
-package com.do_issac.hotel_manage.dto;
+package com.do_issac.hotel_manage.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,9 +10,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterResponse {
-    private Long taiKhoanId;
+    private Long id;
     private String email;
     private String vaiTro;
     private LocalDateTime ngayTao;
 
+    private String hoTen;
+    private String soDienThoai;
 }

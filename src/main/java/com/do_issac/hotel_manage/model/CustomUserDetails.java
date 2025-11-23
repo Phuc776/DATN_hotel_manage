@@ -20,7 +20,11 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(taiKhoan.getVaiTro().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + taiKhoan.getVaiTro().name()));
+    }
+
+    public Long getId() {
+        return taiKhoan.getId();
     }
 
     @Override

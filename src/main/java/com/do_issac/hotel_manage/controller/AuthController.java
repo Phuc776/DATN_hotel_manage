@@ -1,9 +1,9 @@
 package com.do_issac.hotel_manage.controller;
 
-import com.do_issac.hotel_manage.dto.LoginRequest;
-import com.do_issac.hotel_manage.dto.LoginResponse;
-import com.do_issac.hotel_manage.dto.RegisterRequest;
-import com.do_issac.hotel_manage.dto.RegisterResponse;
+import com.do_issac.hotel_manage.dto.request.LoginRequest;
+import com.do_issac.hotel_manage.dto.response.LoginResponse;
+import com.do_issac.hotel_manage.dto.request.RegisterRequest;
+import com.do_issac.hotel_manage.dto.response.RegisterResponse;
 import com.do_issac.hotel_manage.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

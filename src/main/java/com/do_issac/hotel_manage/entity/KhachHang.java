@@ -26,7 +26,7 @@ public class KhachHang {
 
     private LocalDateTime ngayXacThucCCCD;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String soDienThoai;
 
     @Column(nullable = false, unique = true)

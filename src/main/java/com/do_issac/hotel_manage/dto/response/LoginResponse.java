@@ -1,4 +1,4 @@
-package com.do_issac.hotel_manage.dto;
+package com.do_issac.hotel_manage.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

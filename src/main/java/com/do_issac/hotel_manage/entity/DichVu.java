@@ -23,4 +23,7 @@ public class DichVu {
 
     @OneToMany(mappedBy = "dichVu")
     private List<ChiTietHoaDon> chiTietHoaDons;
+
+    @ManyToMany(mappedBy = "dichVus")
+    private List<KhachSan> khachSans;
 }

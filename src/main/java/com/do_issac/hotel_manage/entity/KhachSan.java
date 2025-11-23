@@ -35,4 +35,20 @@ public class KhachSan {
 
     @OneToMany(mappedBy = "khachSan", cascade = CascadeType.ALL)
     private List<DanhGia> danhGias;
+
+    @ManyToMany
+    @JoinTable(
+            name = "khachsan_loaiphong",
+            joinColumns = @JoinColumn(name = "khach_san_id"),
+            inverseJoinColumns = @JoinColumn(name = "loai_phong_id")
+    )
+    private List<LoaiPhong> loaiPhongs;
+
+    @ManyToMany
+    @JoinTable(
+            name = "khachsan_dichvu",
+            joinColumns = @JoinColumn(name = "khach_san_id"),
+            inverseJoinColumns = @JoinColumn(name = "dich_vu_id")
+    )
+    private List<DichVu> dichVus;
 }

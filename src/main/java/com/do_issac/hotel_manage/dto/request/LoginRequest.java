@@ -1,4 +1,4 @@
-package com.do_issac.hotel_manage.dto;
+package com.do_issac.hotel_manage.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
