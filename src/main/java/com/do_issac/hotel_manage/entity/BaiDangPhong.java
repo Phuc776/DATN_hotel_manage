@@ -16,13 +16,23 @@ public class BaiDangPhong {
     private String tieuDe;
     private String moTa;
     private LocalDateTime ngayDang;
-    private boolean daDuyet;
+
+    @Enumerated(EnumType.STRING)
+    private TrangThaiBaiDang trangThaiBaiDang;
+
+    private Long nguoiDuyetId;
+
+    private Integer soLuongPhong;
 
     @ManyToOne
-    @JoinColumn(name = "phongId", nullable = false)
-    private Phong phong;
+    @JoinColumn(name = "loaiPhongId", nullable = false)
+    private LoaiPhong loaiPhong;
 
     @ManyToOne
     @JoinColumn(name = "taiKhoanId", nullable = false)
     private TaiKhoan chuKhachSan;
+
+    @ManyToOne
+    @JoinColumn(name = "khachSanId", nullable = false)
+    private KhachSan khachSan;
 }

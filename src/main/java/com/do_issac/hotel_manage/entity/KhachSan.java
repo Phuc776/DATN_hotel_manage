@@ -23,6 +23,8 @@ public class KhachSan {
     @Enumerated(EnumType.STRING)
     private TrangThaiKhachSan trangThai = TrangThaiKhachSan.CHO_DUYET;
 
+    private Long nguoiDuyetId;
+
     @ManyToOne
     @JoinColumn(name = "taiKhoanId", nullable = false)
     private TaiKhoan chuKhachSan;
@@ -31,6 +33,9 @@ public class KhachSan {
     private List<Phong> phongs;
 
     @OneToMany(mappedBy = "khachSan", cascade = CascadeType.ALL)
+    private List<BaiDangPhong> baiDangPhongs;
+
+    @OneToMany(mappedBy = "khachSan")
     private List<NhanVien> nhanViens;
 
     @OneToMany(mappedBy = "khachSan", cascade = CascadeType.ALL)

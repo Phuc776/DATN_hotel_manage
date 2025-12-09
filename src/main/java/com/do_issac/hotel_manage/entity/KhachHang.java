@@ -18,19 +18,11 @@ public class KhachHang {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String hoTen;
-
     @Column(unique = true)
     private String CCCD;
 
     private LocalDateTime ngayXacThucCCCD;
 
-    @Column(unique = true)
-    private String soDienThoai;
-
-    @Column(nullable = false, unique = true)
-    private String email;
 
     @OneToOne
     @JoinColumn(name = "taiKhoanId", nullable = false)

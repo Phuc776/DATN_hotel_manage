@@ -3,6 +3,8 @@ package com.do_issac.hotel_manage.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "thong_bao")
 @Data
@@ -16,10 +18,13 @@ public class ThongBao {
     private Long id;
 
     private String noiDung;
-    private String ngayTao;
-    private boolean daXem;
+
+    private LocalDateTime ngayTao;
+    private boolean daXem = false;
 
     @ManyToOne
     @JoinColumn(name = "taiKhoanId", nullable = false)
     private TaiKhoan taiKhoan;
+
+    private Long actorId;
 }

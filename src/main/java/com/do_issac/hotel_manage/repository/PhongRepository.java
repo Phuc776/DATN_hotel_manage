@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PhongRepository extends JpaRepository<Phong, Long> {
-    List<Phong> findByKhachSanId(Long khachSanId);
-    List<Phong> findByLoaiPhongId(Long loaiPhongId);
+    List<Phong> findByKhachSan_Id(Long khachSanId);
+    List<Phong> findByLoaiPhong_Id(Long loaiPhongId);
+    long countByKhachSan_Id(Long khachSanId);
+
 }

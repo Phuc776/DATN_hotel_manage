@@ -22,8 +22,7 @@ public class HoaDon {
     private double tongTien;
     private String noiDung;
 
-    @OneToOne
-    @JoinColumn(name = "datPhongId")
+    @OneToOne(mappedBy = "hoaDon")
     private ChiTietDatPhong datPhong;
 
     @OneToMany(mappedBy = "hoaDon")

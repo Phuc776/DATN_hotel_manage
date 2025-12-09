@@ -1,5 +1,6 @@
 package com.do_issac.hotel_manage.jwt;
 
+import com.do_issac.hotel_manage.model.CustomUserDetails;
 import com.do_issac.hotel_manage.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,6 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && tokenProvider.validateToken(token)) {
             String email = tokenProvider.extractUsername(token);
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+
+            if (userDetails instanceof CustomUserDetails custom) {
+                if (!custom.getTaiKhoan().isTrangThai()) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Tài khoản đã bị khóa");
+                    return;
+                }
+            }
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(

@@ -7,5 +7,8 @@ import java.util.Optional;
 
 public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, Long> {
     boolean existsByEmail(String email);
+    boolean existsBySoDienThoai(String soDienThoai);
     Optional<TaiKhoan> findByEmail(String email);
+
+    boolean existsByIdAndKhachSans_Id(Long id, Long khachSanId);
 }

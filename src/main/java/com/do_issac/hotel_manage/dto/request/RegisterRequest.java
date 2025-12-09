@@ -13,7 +13,8 @@ public class RegisterRequest {
     private String matKhau;
     @NotBlank
     private VaiTro vaiTro;
-
+    @NotBlank
     private String hoTen;
+    @NotBlank
     private String soDienThoai;
 }

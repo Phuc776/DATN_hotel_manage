@@ -14,7 +14,6 @@ public class RegisterResponse {
     private String email;
     private String vaiTro;
     private LocalDateTime ngayTao;
-
     private String hoTen;
     private String soDienThoai;
 }

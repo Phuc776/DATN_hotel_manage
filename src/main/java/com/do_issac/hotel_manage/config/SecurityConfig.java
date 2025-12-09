@@ -30,6 +30,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/public/**",
+                                "/khach-san/public/**",
+                                "/bai-dang-phong/public/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/chu-khach-san/**").hasRole("CHU_KHACH_SAN")
                         .requestMatchers("/nhan-vien/**").hasAnyRole("NHAN_VIEN", "CHU_KHACH_SAN")

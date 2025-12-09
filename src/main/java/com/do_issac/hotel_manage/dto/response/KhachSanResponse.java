@@ -8,6 +8,5 @@ public class KhachSanResponse {
     private String tenKhachSan;
     private String diaChi;
     private String trangThai;
-    private Long chuKhachSanId;
-    private String emailChuKhachSan;
+    private TaiKhoanResponse chuKhachSan;
 }

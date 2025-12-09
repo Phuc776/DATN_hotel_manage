@@ -22,7 +22,13 @@ public class TaiKhoan {
     private String email;
 
     @Column(nullable = false)
+    private String hoTen;
+
+    @Column(nullable = false)
     private String matKhau;
+
+    @Column(unique = true)
+    private String soDienThoai;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -37,12 +43,10 @@ public class TaiKhoan {
     @OneToMany(mappedBy = "taiKhoan", cascade = CascadeType.ALL)
     private List<ThongBao> thongBaos;
 
-    @OneToOne
-    @JoinColumn(name = "nhanVienId")
+    @OneToOne(mappedBy = "taiKhoan")
     private NhanVien nhanVien;
 
-    @OneToOne
-    @JoinColumn(name = "khachHangId")
+    @OneToOne(mappedBy = "taiKhoan")
     private KhachHang khachHang;
 
     @OneToMany(mappedBy = "chuKhachSan")

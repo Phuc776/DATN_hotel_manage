@@ -6,6 +6,6 @@ import lombok.Data;
 public class DichVuResponse {
     private Long id;
     private String tenDichVu;
-    private Double gia;
+    private Double donGia;
     private String moTa;
 }

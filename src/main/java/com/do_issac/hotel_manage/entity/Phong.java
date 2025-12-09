@@ -18,7 +18,9 @@ public class Phong {
     private Long id;
 
     private String soPhong;
-    private TrangThaiPhong trangThaiPhong; // Trong, DaDat, DangDonDep, ...
+
+    @Enumerated(EnumType.STRING)
+    private TrangThaiPhong trangThaiPhong;
 
     @ManyToOne
     @JoinColumn(name = "khachSanId", nullable = false)
@@ -30,7 +32,4 @@ public class Phong {
 
     @OneToMany(mappedBy = "phong")
     private List<ChiTietDatPhong> chiTietDatPhongs;
-
-    @OneToMany(mappedBy = "phong")
-    private List<BaiDangPhong> baiDangPhongs;
 }

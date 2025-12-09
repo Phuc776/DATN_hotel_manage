@@ -12,12 +12,6 @@ public class NhanVien {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String hoTen;
-    @Column(nullable = false)
-    private String email;
-    @Column(unique = true)
-    private String soDienThoai;
     private String chucVu;
 
     @OneToOne
