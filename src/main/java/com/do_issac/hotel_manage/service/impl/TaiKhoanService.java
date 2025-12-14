@@ -52,7 +52,8 @@ public class TaiKhoanService {
         TaiKhoan tk = new TaiKhoan();
         tk.setEmail(request.getEmail());
         tk.setMatKhau(passwordEncoder.encode(request.getMatKhau()));
-        tk.setHoTen("New Admin");
+        tk.setHoTen(request.getHoTen());
+        tk.setSoDienThoai(request.getSoDienThoai());
         tk.setVaiTro(VaiTro.ADMIN);
         tk.setNgayTao(LocalDateTime.now());
         tk.setTrangThai(true);

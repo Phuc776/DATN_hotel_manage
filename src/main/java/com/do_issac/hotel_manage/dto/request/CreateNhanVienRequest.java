@@ -13,9 +13,12 @@ public class CreateNhanVienRequest {
     @Email
     @NotBlank
     private String email;
+    @NotBlank
+    private String matKhau;
 
     @NotBlank
     private String soDienThoai;
+
 
     private String chucVu;
 

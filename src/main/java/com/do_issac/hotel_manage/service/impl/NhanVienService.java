@@ -67,7 +67,7 @@ public class NhanVienService {
 
         TaiKhoan tk = new TaiKhoan();
         tk.setEmail(rq.getEmail());
-        tk.setMatKhau(passwordEncoder.encode("123456")); // mật khẩu tạm
+        tk.setMatKhau(passwordEncoder.encode(rq.getMatKhau()));
         tk.setHoTen(rq.getHoTen());
         tk.setSoDienThoai(rq.getSoDienThoai());
         tk.setVaiTro(VaiTro.NHAN_VIEN);
