@@ -4,4 +4,7 @@ import com.do_issac.hotel_manage.entity.KhachHang;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
+    KhachHang findByTaiKhoan_Id(Long taiKhoanId);
+
+    boolean existsByCCCD(String cccd);
 }

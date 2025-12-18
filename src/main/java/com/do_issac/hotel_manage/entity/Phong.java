@@ -1,5 +1,6 @@
 package com.do_issac.hotel_manage.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +8,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "phong")
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,5 +31,6 @@ public class Phong {
     private LoaiPhong loaiPhong;
 
     @OneToMany(mappedBy = "phong")
+    @JsonIgnore
     private List<ChiTietDatPhong> chiTietDatPhongs;
 }

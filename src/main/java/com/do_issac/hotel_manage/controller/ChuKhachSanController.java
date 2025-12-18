@@ -52,6 +52,12 @@ public class ChuKhachSanController {
         Long id = authUtil.getCurrentUserId();
         return khachSanService.getAllHotelsByOwner(id);
     }
+
+    @GetMapping("/khach-san/active")
+    public ApiResponse<?> getAllActiveHotels() {
+        Long id = authUtil.getCurrentUserId();
+        return khachSanService.getAllActiveHotelsByOwner(id);
+    }
     @GetMapping("/khach-san/{id}")
     public ApiResponse<?> getDetail(@PathVariable Long id) {
         Long userId = authUtil.getCurrentUserId();
@@ -61,7 +67,7 @@ public class ChuKhachSanController {
     @GetMapping("/khach-san/{id}/phong")
     public ApiResponse<?> getAllPhongByKhachSan(@PathVariable Long id) {
         Long userId = authUtil.getCurrentUserId();
-        return phongService.getAllRooms(userId, id);
+        return phongService.getAllRoomsByHotelId(userId, id);
     }
 
     @GetMapping("/loai-phong")
@@ -178,6 +184,11 @@ public class ChuKhachSanController {
     public ApiResponse<?> createBaiDangPhong(@RequestBody BaiDangPhongRequest request) {
         Long userId = authUtil.getCurrentUserId();
         return baiDangPhongService.create(userId, request);
+    }
+    @GetMapping("/phong")
+    public ApiResponse<?> getAllPhong() {
+        Long userId = authUtil.getCurrentUserId();
+        return phongService.getAllRoomsByOwner(userId);
     }
 
     @GetMapping("/phong/{id}")

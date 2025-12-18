@@ -22,6 +22,6 @@ public class ThanhToan {
     private LocalDateTime ngayThanhToan;
 
     @ManyToOne
-    @JoinColumn(name = "datPhongId", nullable = false)
-    private ChiTietDatPhong datPhong;
+    @JoinColumn(name = "hoaDonId", nullable = false)
+    private HoaDon hoaDon;
 }

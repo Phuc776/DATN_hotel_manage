@@ -9,4 +9,6 @@ import java.util.List;
 public interface KhachSanRepository extends JpaRepository<KhachSan, Long> {
     List<KhachSan> findByChuKhachSanId(Long ownerId);
     List<KhachSan> findByTrangThai(TrangThaiKhachSan trangThai);
+
+    List<KhachSan> findByChuKhachSan_IdAndTrangThai(Long ownerId, TrangThaiKhachSan trangThai);
 }

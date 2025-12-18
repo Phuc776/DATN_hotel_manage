@@ -7,7 +7,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "loai_phong")
-@Data
 @Getter
 @Setter
 @NoArgsConstructor

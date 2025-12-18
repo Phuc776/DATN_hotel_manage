@@ -26,5 +26,8 @@ public class HoaDon {
     private ChiTietDatPhong datPhong;
 
     @OneToMany(mappedBy = "hoaDon")
+    private List<ThanhToan> thanhToans;
+
+    @OneToMany(mappedBy = "hoaDon")
     private List<ChiTietHoaDon> chiTietHoaDons;
 }

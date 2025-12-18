@@ -8,7 +8,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "chi_tiet_dat_phong")
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,6 +28,9 @@ public class ChiTietDatPhong {
     private LocalDateTime ngayTao;
     private LocalDateTime ngayCapNhat;
 
+    @Enumerated(EnumType.STRING)
+    private TrangThaiDatPhong trangThai;
+
     @ManyToOne
     @JoinColumn(name = "phongId", nullable = false)
     private Phong phong;
@@ -36,9 +38,6 @@ public class ChiTietDatPhong {
     @ManyToOne
     @JoinColumn(name = "khachHangId", nullable = false)
     private KhachHang khachHang;
-
-    @OneToMany(mappedBy = "datPhong")
-    private List<ThanhToan> thanhToans;
 
     @OneToOne
     @JoinColumn(name = "hoaDonId")

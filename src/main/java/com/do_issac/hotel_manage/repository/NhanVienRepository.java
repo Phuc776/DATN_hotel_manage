@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface NhanVienRepository extends JpaRepository<NhanVien, Long> {
+    NhanVien findByTaiKhoan_Id(Long taiKhoanId);
     List<NhanVien> findAllByKhachSan_ChuKhachSan_Id(Long chuKhachSanId);
     List<NhanVien> findAllByKhachSan_Id(Long khachSanId);
 

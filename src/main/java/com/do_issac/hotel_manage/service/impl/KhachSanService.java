@@ -33,12 +33,26 @@ public class KhachSanService {
                 khachSanMapper.toResponseList(khachSanRepository.findByChuKhachSanId(ownerId))
         );
     }
+    //CHU_KHACH_SAN: xem danh sách KS hoạt động của mình
+    public ApiResponse<List<KhachSanResponse>> getAllActiveHotelsByOwner(Long ownerId) {
+        return ApiResponse.success(
+                "Danh sách khách sạn hoạt động",
+                khachSanMapper.toResponseList(
+                        khachSanRepository.findByChuKhachSan_IdAndTrangThai(
+                                ownerId,
+                                TrangThaiKhachSan.DA_DUYET
+                        )
+                )
+        );
+    }
 
+    //PUBLIC: xem danh sách KS đã duyệt
     public ApiResponse<List<KhachSanResponse>> getAllApproved() {
         List<KhachSan> list = khachSanRepository.findByTrangThai(TrangThaiKhachSan.DA_DUYET);
         return ApiResponse.success( "Danh sách khách sạn đã duyệt", khachSanMapper.toResponseList(list));
     }
 
+    //PUBLIC: xem chi tiết KS đã duyệt
     public ApiResponse<KhachSanResponse> getApprovedById(Long id) {
         KhachSan ks = khachSanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy khách sạn"));
@@ -222,6 +236,7 @@ public class KhachSanService {
 
         return ApiResponse.success("Từ chối khách sạn thành công", null);
     }
+
 
 
 }

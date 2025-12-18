@@ -9,6 +9,7 @@ import com.do_issac.hotel_manage.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -150,6 +151,9 @@ public class BaiDangPhongService {
         if (!ks.getChuKhachSan().getId().equals(ownerId)) {
             throw new AccessDeniedException("Bạn không có quyền tạo bài đăng cho khách sạn này");
         }
+        if (!ks.getTrangThai().equals(TrangThaiKhachSan.DA_DUYET)) {
+            throw new RuntimeException("Khách sạn chưa được duyệt, không thể tạo bài đăng phòng");
+        }
 
         LoaiPhong lp = loaiPhongRepository.findById(request.getLoaiPhongId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy loại phòng"));
@@ -169,6 +173,7 @@ public class BaiDangPhongService {
         return ApiResponse.success("Tạo bài đăng phòng thành công", baiDangPhongMapper.toResponse(bdp));
     }
 
+    @Transactional
     public ApiResponse<Void> approve(Long baiDangId) {
 
         BaiDangPhong bdp = baiDangPhongRepository.findById(baiDangId)
@@ -179,6 +184,11 @@ public class BaiDangPhongService {
         }
 
         bdp.setTrangThaiBaiDang(TrangThaiBaiDang.DA_DUYET);
+
+        LoaiPhong lp = bdp.getLoaiPhong();
+        lp.setSoLuongCon(lp.getSoLuongCon() + bdp.getSoLuongPhong());
+        loaiPhongRepository.save(lp);
+
         baiDangPhongRepository.save(bdp);
 
 
