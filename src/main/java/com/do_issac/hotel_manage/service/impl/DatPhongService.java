@@ -156,10 +156,6 @@ public class DatPhongService {
             result.add(booking);
         }
 
-        LoaiPhong lp = baiDang.getLoaiPhong();
-        lp.setSoLuongCon(lp.getSoLuongCon() - req.getSoLuongPhongDat());
-        loaiPhongRepository.save(lp);
-
         return ApiResponse.success(
                 "Đặt phòng thành công",
                 bookingMapper.toResponseList(result)
@@ -234,6 +230,23 @@ public class DatPhongService {
         );
     }
 
+    public ApiResponse<?> getDetailBookingForNhanVien(Long userId, Long bookingId) {
+        Long khachSanId = nhanVienRepository
+                .findByTaiKhoan_Id(userId)
+                .getKhachSan()
+                .getId();
+
+        ChiTietDatPhong booking = datPhongRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
+        if (!booking.getPhong().getKhachSan().getId().equals(khachSanId)) {
+            throw new RuntimeException("Không có quyền truy cập booking này");
+        }
+        return ApiResponse.success(
+                "Chi tiết booking",
+                bookingMapper.toResponse(booking)
+        );
+    }
+
     @Transactional
     public void checkIn(Long bookingId) {
         ChiTietDatPhong b = datPhongRepository.findById(bookingId)
@@ -280,6 +293,10 @@ public class DatPhongService {
         b.getQrs().forEach(qrService::invalidateQr);
         b.setTrangThai(TrangThaiDatPhong.DA_TRA_PHONG);
         b.getPhong().setTrangThaiPhong(TrangThaiPhong.TRONG);
+
+        b.getPhong().getLoaiPhong().setSoLuongCon(
+                b.getPhong().getLoaiPhong().getSoLuongCon() + 1
+        );
 
 
         phongRepository.save(b.getPhong());

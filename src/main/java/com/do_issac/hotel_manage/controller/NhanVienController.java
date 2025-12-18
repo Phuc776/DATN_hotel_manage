@@ -36,6 +36,11 @@ public class NhanVienController {
         Long userId = authUtil.getCurrentUserId();
         return datPhongService.getAllBookingsForNhanVien(userId);
     }
+    @GetMapping("/booking/{id}")
+    public ApiResponse<?> getBookingDetail(@PathVariable Long id) {
+        Long userId = authUtil.getCurrentUserId();
+        return datPhongService.getDetailBookingForNhanVien(userId, id);
+    }
     @PostMapping("/booking/{id}/check-in")
     public ApiResponse<?> checkIn(@PathVariable Long id) {
         datPhongService.checkIn(id);
