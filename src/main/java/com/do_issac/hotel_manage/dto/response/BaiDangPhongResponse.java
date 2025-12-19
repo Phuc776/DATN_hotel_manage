@@ -4,6 +4,7 @@ import com.do_issac.hotel_manage.entity.TrangThaiBaiDang;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class BaiDangPhongResponse {
@@ -15,4 +16,5 @@ public class BaiDangPhongResponse {
     private LoaiPhongResponse loaiPhong;
     private KhachSanResponse khachSan;
     private LocalDateTime ngayDang;
+    private List<String> hinhAnh;
 }

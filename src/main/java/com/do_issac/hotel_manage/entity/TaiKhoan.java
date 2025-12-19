@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class TaiKhoan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +35,8 @@ public class TaiKhoan {
     private LocalDateTime ngayTao;
 
     private LocalDateTime lanCuoiDangNhap;
+
+    private String avatarUrl;
 
     private boolean trangThai;
 

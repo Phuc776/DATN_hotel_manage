@@ -3,13 +3,13 @@ package com.do_issac.hotel_manage.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "danh_gia")
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class DanhGia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

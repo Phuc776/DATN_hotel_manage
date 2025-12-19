@@ -7,7 +7,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "dich_vu")
-@Data
 @Getter
 @Setter
 @NoArgsConstructor

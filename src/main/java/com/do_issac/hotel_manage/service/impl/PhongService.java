@@ -1,6 +1,8 @@
 package com.do_issac.hotel_manage.service.impl;
 
+import com.do_issac.hotel_manage.dto.response.BookingPhongResponse;
 import com.do_issac.hotel_manage.dto.response.PhongResponse;
+import com.do_issac.hotel_manage.dto.response.PhongVaBookingResponse;
 import com.do_issac.hotel_manage.entity.*;
 import com.do_issac.hotel_manage.jwt.QrJwtProvider;
 import com.do_issac.hotel_manage.mapper.PhongMapper;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -49,14 +53,61 @@ public class PhongService {
     }
 
     public ApiResponse<?> getAllRoomsForNhanVien(Long userId) {
-        NhanVien nhanVien = nhanVienRepository.findByTaiKhoan_Id(userId);
-        KhachSan khachSan = nhanVien.getKhachSan();
 
-        List<Phong> phongList = phongRepository.findByKhachSan_Id(khachSan.getId());
-        return ApiResponse.success("Lấy danh sách phòng thành công",
-                phongMapper.toResponseList(phongList)
+        NhanVien nv = nhanVienRepository.findByTaiKhoan_Id(userId);
+        KhachSan ks = nv.getKhachSan();
+
+        List<Phong> phongList =
+                phongRepository.findByKhachSanWithBookings(ks.getId());
+
+        List<PhongVaBookingResponse> result = new ArrayList<>();
+
+        for (Phong phong : phongList) {
+
+            PhongVaBookingResponse res = new PhongVaBookingResponse();
+            res.setId(phong.getId());
+            res.setSoPhong(phong.getSoPhong());
+            res.setTrangThaiPhong(phong.getTrangThaiPhong());
+            res.setTenLoaiPhong(phong.getLoaiPhong().getTenLoaiPhong());
+
+            List<BookingPhongResponse> bookingResponses = new ArrayList<>();
+
+            for (ChiTietDatPhong booking : phong.getChiTietDatPhongs()) {
+
+                // Có thể lọc theo trạng thái nếu muốn
+                if (booking.getTrangThai() == TrangThaiDatPhong.DA_HUY ||
+                        booking.getTrangThai() == TrangThaiDatPhong.DA_TRA_PHONG) continue;
+
+                BookingPhongResponse bRes = new BookingPhongResponse();
+                bRes.setBookingId(booking.getId());
+                bRes.setNgayNhan(booking.getNgayNhan());
+                bRes.setNgayTra(booking.getNgayTra());
+                bRes.setTrangThai(booking.getTrangThai());
+
+                KhachHang kh = booking.getKhachHang();
+                if (kh != null && kh.getTaiKhoan() != null) {
+                    bRes.setTenKhachHang(kh.getTaiKhoan().getHoTen());
+                    bRes.setSoDienThoai(kh.getTaiKhoan().getSoDienThoai());
+                }
+
+                bookingResponses.add(bRes);
+            }
+
+            // sắp xếp booking theo ngày nhận
+            bookingResponses.sort(
+                    Comparator.comparing(BookingPhongResponse::getNgayNhan)
+            );
+
+            res.setBookings(bookingResponses);
+            result.add(res);
+        }
+
+        return ApiResponse.success(
+                "Lấy danh sách phòng kèm booking thành công",
+                result
         );
     }
+
 
     public ApiResponse<List<PhongResponse>> getAllRoomsByHotelId(Long userId, Long hotelId) {
 
@@ -67,15 +118,49 @@ public class PhongService {
                 phongMapper.toResponseList(phongList));
     }
 
-    public ApiResponse<PhongResponse> getRoomById(Long userId, Long roomId) {
-        Phong p = phongRepository.findById(roomId)
+    public ApiResponse<?> getRoomById(Long userId, Long roomId) {
+
+        Phong phong = phongRepository.findByIdWithBookings(roomId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng"));
 
-        validateHotelPermission(userId, p.getKhachSan().getId());
+        validateHotelPermission(userId, phong.getKhachSan().getId());
 
-        return ApiResponse.success("Lấy thông tin phòng thành công",
-                phongMapper.toResponse(p));
+        PhongVaBookingResponse res = new PhongVaBookingResponse();
+        res.setId(phong.getId());
+        res.setSoPhong(phong.getSoPhong());
+        res.setTrangThaiPhong(phong.getTrangThaiPhong());
+        res.setTenLoaiPhong(phong.getLoaiPhong().getTenLoaiPhong());
+
+        List<BookingPhongResponse> bookings = new ArrayList<>();
+
+        for (ChiTietDatPhong booking : phong.getChiTietDatPhongs()) {
+            if (booking.getTrangThai() == TrangThaiDatPhong.DA_HUY ||
+                    booking.getTrangThai() == TrangThaiDatPhong.DA_TRA_PHONG) continue;
+
+            BookingPhongResponse b = new BookingPhongResponse();
+            b.setBookingId(booking.getId());
+            b.setNgayNhan(booking.getNgayNhan());
+            b.setNgayTra(booking.getNgayTra());
+            b.setTrangThai(booking.getTrangThai());
+
+            KhachHang kh = booking.getKhachHang();
+            if (kh != null) {
+                b.setTenKhachHang(kh.getTaiKhoan().getHoTen());
+                b.setSoDienThoai(kh.getTaiKhoan().getSoDienThoai());
+            }
+
+            bookings.add(b);
+        }
+
+        bookings.sort(Comparator.comparing(BookingPhongResponse::getNgayNhan));
+        res.setBookings(bookings);
+
+        return ApiResponse.success(
+                "Lấy chi tiết phòng kèm booking thành công",
+                res
+        );
     }
+
 
     public ApiResponse<PhongResponse> updateRoomNumber(Long userId, Long roomId, String newRoomNumber) {
 

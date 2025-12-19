@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class KhachSan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,4 +54,8 @@ public class KhachSan {
             inverseJoinColumns = @JoinColumn(name = "dich_vu_id")
     )
     private List<DichVu> dichVus;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "khach_san_id")
+    private List<HinhAnh> hinhAnh;
 }

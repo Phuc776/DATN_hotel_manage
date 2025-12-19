@@ -1,6 +1,7 @@
 package com.do_issac.hotel_manage.mapper;
 
 import com.do_issac.hotel_manage.dto.response.KhachSanResponse;
+import com.do_issac.hotel_manage.entity.HinhAnh;
 import com.do_issac.hotel_manage.entity.KhachSan;
 import org.mapstruct.Mapper;
 
@@ -11,4 +12,11 @@ public interface KhachSanMapper {
     KhachSanResponse toResponse(KhachSan ks);
 
     List<KhachSanResponse> toResponseList(List<KhachSan> list);
+
+    default List<String> mapHinhAnh(List<HinhAnh> hinhAnh) {
+        if (hinhAnh == null) return List.of();
+        return hinhAnh.stream()
+                .map(HinhAnh::getImageUrl)
+                .toList();
+    }
 }

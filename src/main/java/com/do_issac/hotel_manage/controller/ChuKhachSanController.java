@@ -185,6 +185,24 @@ public class ChuKhachSanController {
         Long userId = authUtil.getCurrentUserId();
         return baiDangPhongService.create(userId, request);
     }
+    @PutMapping("/bai-dang-phong/{id}")
+    public ApiResponse<?> updateBaiDangPhong(
+            @PathVariable Long id,
+            @RequestBody BaiDangPhongRequest request
+    ) {
+        Long userId = authUtil.getCurrentUserId();
+        return baiDangPhongService.update(id, userId, request);
+    }
+
+    @PutMapping("/bai-dang-phong/{id}/images")
+    public ApiResponse<?> updateBaiDangPhongImages(
+            @PathVariable Long id,
+            @RequestBody BaiDangPhongImagesRequest request
+    ) {
+        Long userId = authUtil.getCurrentUserId();
+        return baiDangPhongService.updateImages(id, userId, request.getImageUrls());
+    }
+
     @GetMapping("/phong")
     public ApiResponse<?> getAllPhong() {
         Long userId = authUtil.getCurrentUserId();

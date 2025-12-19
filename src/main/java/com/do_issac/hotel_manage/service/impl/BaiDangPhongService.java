@@ -164,6 +164,7 @@ public class BaiDangPhongService {
         bdp.setNgayDang(LocalDateTime.now());
         bdp.setSoLuongPhong(request.getSoLuongPhong());
         bdp.setTrangThaiBaiDang(TrangThaiBaiDang.CHO_DUYET);
+        bdp.setHinhAnh(mapToHinhAnh(request.getHinhAnh()));
 
         bdp.setLoaiPhong(lp);
         bdp.setKhachSan(ks);
@@ -172,6 +173,85 @@ public class BaiDangPhongService {
         baiDangPhongRepository.save(bdp);
         return ApiResponse.success("Tạo bài đăng phòng thành công", baiDangPhongMapper.toResponse(bdp));
     }
+
+    @Transactional
+    public ApiResponse<BaiDangPhongResponse> update(
+            Long baiDangId,
+            Long userId,
+            BaiDangPhongRequest request
+    ) {
+        BaiDangPhong bdp = baiDangPhongRepository.findById(baiDangId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bài đăng"));
+
+        if (!bdp.getChuKhachSan().getId().equals(userId)) {
+            throw new AccessDeniedException("Bạn không có quyền chỉnh sửa bài đăng này");
+        }
+
+        if (bdp.getTrangThaiBaiDang() == TrangThaiBaiDang.DA_DUYET) {
+            throw new RuntimeException("Bài đăng đã được duyệt, không thể chỉnh sửa");
+        }
+
+        bdp.setTieuDe(request.getTieuDe());
+        bdp.setMoTa(request.getMoTa());
+        bdp.setSoLuongPhong(request.getSoLuongPhong());
+
+        LoaiPhong lp = loaiPhongRepository.findById(request.getLoaiPhongId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy loại phòng"));
+        bdp.setLoaiPhong(lp);
+
+        // xử lý ảnh (nếu có)
+        if (request.getHinhAnh() != null) {
+            bdp.getHinhAnh().clear();
+            bdp.getHinhAnh().addAll(mapToHinhAnh(request.getHinhAnh()));
+        }
+
+        // reset trạng thái
+        bdp.setTrangThaiBaiDang(TrangThaiBaiDang.CHO_DUYET);
+
+        baiDangPhongRepository.save(bdp);
+
+        return ApiResponse.success(
+                "Cập nhật bài đăng phòng thành công",
+                baiDangPhongMapper.toResponse(bdp)
+        );
+    }
+
+    @Transactional
+    public ApiResponse<Void> updateImages(
+            Long baiDangId,
+            Long ownerId,
+            List<String> imageUrls
+    ) {
+        BaiDangPhong bdp = baiDangPhongRepository.findById(baiDangId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bài đăng"));
+
+        // kiểm tra quyền
+        if (!bdp.getChuKhachSan().getId().equals(ownerId)) {
+            throw new AccessDeniedException("Không có quyền chỉnh sửa bài đăng");
+        }
+
+        // chỉ cho phép sửa ảnh khi đã duyệt
+        if (bdp.getTrangThaiBaiDang() != TrangThaiBaiDang.DA_DUYET) {
+            throw new RuntimeException("Chỉ được chỉnh sửa ảnh sau khi bài đăng được duyệt");
+        }
+
+        // clear ảnh cũ
+        bdp.getHinhAnh().clear();
+
+        // add ảnh mới
+        List<HinhAnh> images = imageUrls.stream()
+                .map(url -> {
+                    HinhAnh img = new HinhAnh();
+                    img.setImageUrl(url);
+                    return img;
+                })
+                .toList();
+
+        bdp.getHinhAnh().addAll(images);
+
+        return ApiResponse.success("Cập nhật hình ảnh thành công", null);
+    }
+
 
     @Transactional
     public ApiResponse<Void> approve(Long baiDangId) {
@@ -238,6 +318,17 @@ public class BaiDangPhongService {
                 .filter(bdp -> bdp.getKhachSan().getId().equals(khachSanId))
                 .toList();
         return baiDangPhongMapper.toResponseList(posts);
+    }
 
+    private List<HinhAnh> mapToHinhAnh(List<String> urls) {
+        if (urls == null || urls.isEmpty()) return List.of();
+
+        return urls.stream()
+                .map(url -> {
+                    HinhAnh img = new HinhAnh();
+                    img.setImageUrl(url);
+                    return img;
+                })
+                .toList();
     }
 }

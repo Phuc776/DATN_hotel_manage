@@ -5,11 +5,9 @@ import lombok.*;
 
 @Entity
 @Table(name = "chi_tiet_hoa_don")
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ChiTietHoaDon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

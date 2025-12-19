@@ -3,6 +3,8 @@ package com.do_issac.hotel_manage.dto.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class BaiDangPhongRequest {
     @NotNull
@@ -15,4 +17,6 @@ public class BaiDangPhongRequest {
     private Long khachSanId;
     @NotNull
     private Integer soLuongPhong;
+
+    private List<String> hinhAnh;
 }

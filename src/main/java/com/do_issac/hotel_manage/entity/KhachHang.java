@@ -8,7 +8,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "khach_hang")
-@Data
 @Getter
 @Setter
 @NoArgsConstructor

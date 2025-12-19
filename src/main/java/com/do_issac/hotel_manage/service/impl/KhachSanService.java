@@ -3,6 +3,7 @@ package com.do_issac.hotel_manage.service.impl;
 import com.do_issac.hotel_manage.dto.request.KhachSanRequest;
 import com.do_issac.hotel_manage.dto.response.DetailKhachSanResponse;
 import com.do_issac.hotel_manage.dto.response.KhachSanResponse;
+import com.do_issac.hotel_manage.entity.HinhAnh;
 import com.do_issac.hotel_manage.entity.KhachSan;
 import com.do_issac.hotel_manage.entity.TaiKhoan;
 import com.do_issac.hotel_manage.entity.TrangThaiKhachSan;
@@ -87,6 +88,8 @@ public class KhachSanService {
         ks.setChuKhachSan(owner);
         ks.setTrangThai(TrangThaiKhachSan.CHO_DUYET);
 
+        ks.setHinhAnh(mapToHinhAnh(request.getHinhAnh()));
+
         ks = khachSanRepository.save(ks);
 
         notificationService.push(ownerId,
@@ -110,6 +113,11 @@ public class KhachSanService {
 
         ks.setTenKhachSan(request.getTenKhachSan());
         ks.setDiaChi(request.getDiaChi());
+
+        if (request.getHinhAnh() != null) {
+            ks.getHinhAnh().clear(); // orphanRemoval = true → xóa ảnh cũ
+            ks.getHinhAnh().addAll(mapToHinhAnh(request.getHinhAnh()));
+        }
 
         if(ks.getTrangThai() == TrangThaiKhachSan.DA_DUYET) {
             ks.setTrangThai(TrangThaiKhachSan.CAP_NHAT_THONG_TIN);
@@ -236,7 +244,16 @@ public class KhachSanService {
 
         return ApiResponse.success("Từ chối khách sạn thành công", null);
     }
+    private List<HinhAnh> mapToHinhAnh(List<String> urls) {
+        if (urls == null || urls.isEmpty()) return List.of();
 
-
+        return urls.stream()
+                .map(url -> {
+                    HinhAnh img = new HinhAnh();
+                    img.setImageUrl(url);
+                    return img;
+                })
+                .toList();
+    }
 
 }

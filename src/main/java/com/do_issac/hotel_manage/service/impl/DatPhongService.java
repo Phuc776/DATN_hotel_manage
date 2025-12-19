@@ -34,6 +34,13 @@ public class DatPhongService {
     private final ChiTietDatPhongMapper bookingMapper;
     private final PhongMapper phongMapper;
 
+    List<TrangThaiDatPhong> activeStatuses = List.of(
+            TrangThaiDatPhong.CHO_XAC_NHAN,
+            TrangThaiDatPhong.DA_XAC_NHAN,
+            TrangThaiDatPhong.DANG_O,
+            TrangThaiDatPhong.CHO_TRA
+    );
+
 
     public List<Phong> findAvailableRooms(
             Long loaiPhongId,
@@ -46,7 +53,7 @@ public class DatPhongService {
                 .filter(p -> p.getTrangThaiPhong() == TrangThaiPhong.TRONG)
                 .filter(p ->
                         datPhongRepository
-                                .findConflict(p.getId(), ngayNhan, ngayTra)
+                                .findConflict(p.getId(), ngayNhan, ngayTra, activeStatuses)
                                 .isEmpty()
                 )
                 .toList();
@@ -66,8 +73,8 @@ public class DatPhongService {
 
             long soPhongDaDat = datPhongRepository.countBookedRooms(
                     loaiPhongId,
-                    ngayNhan,
-                    ngayTra
+                    ngayNhan, ngayTra,
+                    activeStatuses
             );
 
             BaiDangPhongKhaDungResponse res = getBaiDangPhongKhaDungResponse(post, (int) soPhongDaDat);

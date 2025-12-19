@@ -2,6 +2,8 @@ package com.do_issac.hotel_manage.dto.response;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class DetailKhachSanResponse {
     private Long id;
@@ -13,4 +15,5 @@ public class DetailKhachSanResponse {
     private int soNhanVien;
     private int soBaiDangPhong;
     private double danhGiaTrungBinh;
+    private List<String> hinhAnh;
 }

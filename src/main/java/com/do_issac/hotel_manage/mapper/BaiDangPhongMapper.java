@@ -2,6 +2,7 @@ package com.do_issac.hotel_manage.mapper;
 
 import com.do_issac.hotel_manage.dto.response.BaiDangPhongResponse;
 import com.do_issac.hotel_manage.entity.BaiDangPhong;
+import com.do_issac.hotel_manage.entity.HinhAnh;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -11,4 +12,11 @@ public interface BaiDangPhongMapper {
     BaiDangPhongResponse toResponse(BaiDangPhong bdp);
 
     List<BaiDangPhongResponse> toResponseList(List<BaiDangPhong> list);
+
+    default List<String> mapHinhAnh(List<HinhAnh> hinhAnh) {
+        if (hinhAnh == null) return List.of();
+        return hinhAnh.stream()
+                .map(HinhAnh::getImageUrl)
+                .toList();
+    }
 }

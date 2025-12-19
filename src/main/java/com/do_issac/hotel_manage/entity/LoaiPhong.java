@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class LoaiPhong {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
