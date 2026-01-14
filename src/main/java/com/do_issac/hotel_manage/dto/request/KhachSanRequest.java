@@ -12,5 +12,4 @@ public class KhachSanRequest {
     private String diaChi;
 
     private List<String> hinhAnh;
-
 }

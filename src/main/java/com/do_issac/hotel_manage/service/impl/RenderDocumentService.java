@@ -8,13 +8,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class BookingDocumentService {
+public class RenderDocumentService {
     private final FileRenderUtils fileRenderUtils;
     private final CccdCryptoUtil cccdCryptoUtil;
 

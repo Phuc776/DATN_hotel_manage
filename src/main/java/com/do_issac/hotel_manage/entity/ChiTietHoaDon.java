@@ -13,17 +13,12 @@ public class ChiTietHoaDon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private LoaiChiTietHoaDon loai;
+
     private String moTa;
     private double donGia;
     private int soLuong;
-
-    @ManyToOne
-    @JoinColumn(name = "loaiPhongId", nullable = false)
-    private LoaiPhong loaiPhong;
-
-    @ManyToOne
-    @JoinColumn(name = "dichVuId", nullable = false)
-    private DichVu dichVu;
 
     @ManyToOne
     @JoinColumn(name = "hoaDonId", nullable = false)

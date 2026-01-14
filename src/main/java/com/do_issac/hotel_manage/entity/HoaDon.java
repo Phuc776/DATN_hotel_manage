@@ -21,11 +21,9 @@ public class HoaDon {
     private double tongTien;
     private String noiDung;
 
-    @OneToOne(mappedBy = "hoaDon")
-    private ChiTietDatPhong datPhong;
-
-    @OneToMany(mappedBy = "hoaDon")
-    private List<ThanhToan> thanhToans;
+    @OneToOne
+    @JoinColumn(name = "phienLuuTruId", nullable = false)
+    private PhienLuuTru phienLuuTru;
 
     @OneToMany(mappedBy = "hoaDon")
     private List<ChiTietHoaDon> chiTietHoaDons;

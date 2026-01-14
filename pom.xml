@@ -123,6 +123,13 @@
 			<version>2.0.4</version>
 		</dependency>
 
+		<!-- OpenHTMLtoPDF for HTML to PDF -->
+		<dependency>
+			<groupId>com.openhtmltopdf</groupId>
+			<artifactId>openhtmltopdf-pdfbox</artifactId>
+			<version>1.0.10</version>
+		</dependency>
+
 		<!-- Spring Mail -->
 		<dependency>
 			<groupId>org.springframework</groupId>

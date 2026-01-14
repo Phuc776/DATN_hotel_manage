@@ -1,6 +1,7 @@
 package com.do_issac.hotel_manage.controller;
 
 import com.do_issac.hotel_manage.dto.response.KhachSanResponse;
+import com.do_issac.hotel_manage.service.impl.DanhGiaService;
 import com.do_issac.hotel_manage.service.impl.KhachSanService;
 import com.do_issac.hotel_manage.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/khach-san/public")
 @RequiredArgsConstructor
 public class KhachSanPublicController {
     private final KhachSanService khachSanService;
+    private final DanhGiaService danhGiaService;
 
     @GetMapping
     public ApiResponse<?> getAllApproved() {
@@ -25,5 +28,18 @@ public class KhachSanPublicController {
     @GetMapping("/{id}")
     public ApiResponse<?> getById(@PathVariable Long id) {
         return khachSanService.getApprovedById(id);
+    }
+
+    @GetMapping("/{id}/danh-gia")
+    public ApiResponse<?> xemDanhGia(@PathVariable Long id) {
+
+        return ApiResponse.success(
+                "Danh sách đánh giá",
+                Map.of(
+                        "diemTrungBinh", danhGiaService.tinhDiemTrungBinh(id),
+                        "soLuong", danhGiaService.demSoDanhGia(id),
+                        "danhGias", danhGiaService.xemDanhGiaKhachSan(id)
+                )
+        );
     }
 }

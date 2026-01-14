@@ -1,13 +1,12 @@
 package com.do_issac.hotel_manage.service.impl;
 
 import com.do_issac.hotel_manage.dto.request.ChiTietDatPhongRequest;
-;
+import com.do_issac.hotel_manage.dto.request.KiemTraPhongTrongRequest;
 import com.do_issac.hotel_manage.dto.response.BaiDangPhongKhaDungResponse;
 import com.do_issac.hotel_manage.dto.response.ChiTietDatPhongResponse;
 
 import com.do_issac.hotel_manage.entity.*;
 import com.do_issac.hotel_manage.mapper.ChiTietDatPhongMapper;
-import com.do_issac.hotel_manage.mapper.PhongMapper;
 import com.do_issac.hotel_manage.repository.*;
 import com.do_issac.hotel_manage.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +25,13 @@ public class DatPhongService {
     private final ChiTietDatPhongRepository datPhongRepository;
     private final NhanVienRepository nhanVienRepository;
     private final KhachHangRepository khachHangRepository;
-    private final LoaiPhongRepository loaiPhongRepository;
     private final QrKhoaPhongService qrService;
-    private final BookingDocumentService bookingDocumentService;
+    private final RenderDocumentService documentService;
     private final EmailService emailService;
+    private final PhienLuuTruService phienLuuTruService;
+    private final DanhGiaService danhGiaService;
 
     private final ChiTietDatPhongMapper bookingMapper;
-    private final PhongMapper phongMapper;
 
     List<TrangThaiDatPhong> activeStatuses = List.of(
             TrangThaiDatPhong.CHO_XAC_NHAN,
@@ -60,35 +59,89 @@ public class DatPhongService {
     }
 
     public List<BaiDangPhongKhaDungResponse> checkAvailability(
-            LocalDateTime ngayNhan,
-            LocalDateTime ngayTra
+            KiemTraPhongTrongRequest req
     ) {
+
         List<BaiDangPhong> posts =
                 baiDangPhongRepository.findByTrangThaiBaiDang(TrangThaiBaiDang.DA_DUYET);
 
         List<BaiDangPhongKhaDungResponse> result = new ArrayList<>();
 
         for (BaiDangPhong post : posts) {
-            Long loaiPhongId = post.getLoaiPhong().getId();
 
+
+            // 1. Lọc theo sức chứa
+            if (post.getLoaiPhong().getSoNguoiLon() < req.getSoNguoiLon()
+                    || post.getLoaiPhong().getSoTreEm() < req.getSoTreEm()) {
+                continue;
+            }
+
+            // 2. Đếm phòng đã đặt
             long soPhongDaDat = datPhongRepository.countBookedRooms(
-                    loaiPhongId,
-                    ngayNhan, ngayTra,
+                    post.getLoaiPhong().getId(),
+                    req.getNgayNhan(),
+                    req.getNgayTra(),
                     activeStatuses
             );
 
-            BaiDangPhongKhaDungResponse res = getBaiDangPhongKhaDungResponse(post, (int) soPhongDaDat);
+            int soPhongCon = post.getSoLuongPhong() - (int) soPhongDaDat;
+
+            // 3. Lọc theo số phòng cần đặt
+            if (soPhongCon < req.getSoLuongPhong()) {
+                continue;
+            }
+
+            // 6. Map response
+            BaiDangPhongKhaDungResponse res =
+                    mapToResponse(post, soPhongDaDat);
 
             result.add(res);
         }
 
         return result;
     }
+    public BaiDangPhongKhaDungResponse getDetailAvailability(
+            Long baiDangPhongId,
+            KiemTraPhongTrongRequest req
+    ) {
+        BaiDangPhong post = baiDangPhongRepository.findById(baiDangPhongId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bài đăng"));
 
-    private static BaiDangPhongKhaDungResponse getBaiDangPhongKhaDungResponse(BaiDangPhong post, int soPhongDaDat) {
-        int soPhongCon = post.getSoLuongPhong() - soPhongDaDat;
+        if (post.getTrangThaiBaiDang() != TrangThaiBaiDang.DA_DUYET) {
+            throw new RuntimeException("Bài đăng chưa được duyệt");
+        }
+
+        // check sức chứa
+        if (post.getLoaiPhong().getSoNguoiLon() < req.getSoNguoiLon()
+                || post.getLoaiPhong().getSoTreEm() < req.getSoTreEm()) {
+            throw new RuntimeException("Sức chứa không phù hợp");
+        }
+
+        long soPhongDaDat = datPhongRepository.countBookedRooms(
+                post.getLoaiPhong().getId(),
+                req.getNgayNhan(),
+                req.getNgayTra(),
+                activeStatuses
+        );
+
+        int soPhongCon = post.getSoLuongPhong() - (int) soPhongDaDat;
+
+        if (soPhongCon < req.getSoLuongPhong()) {
+            throw new RuntimeException("Không đủ phòng trống");
+        }
+
+        return mapToResponse(post, soPhongDaDat);
+    }
+    private BaiDangPhongKhaDungResponse mapToResponse(
+            BaiDangPhong post,
+            long soPhongDaDat
+    ) {
+        int soPhongCon = Math.max(
+                post.getSoLuongPhong() - (int) soPhongDaDat, 0
+        );
 
         BaiDangPhongKhaDungResponse res = new BaiDangPhongKhaDungResponse();
+
         res.setBaiDangPhongId(post.getId());
         res.setTieuDe(post.getTieuDe());
         res.setMoTa(post.getMoTa());
@@ -98,14 +151,34 @@ public class DatPhongService {
         res.setSoNguoiLon(post.getLoaiPhong().getSoNguoiLon());
         res.setSoTreEm(post.getLoaiPhong().getSoTreEm());
 
+        res.setKhachSanId(post.getKhachSan().getId());
         res.setTenKhachSan(post.getKhachSan().getTenKhachSan());
         res.setDiaChiKhachSan(post.getKhachSan().getDiaChi());
 
+        // đánh giá
+        res.setDiemDanhGiaTrungBinh(
+                danhGiaService.tinhDiemTrungBinh(post.getKhachSan().getId())
+        );
+        res.setSoLuongDanhGia(
+                danhGiaService.demSoDanhGia(post.getKhachSan().getId())
+        );
+
+        // phòng
         res.setTongSoPhong(post.getSoLuongPhong());
-        res.setSoPhongCon(Math.max(soPhongCon, 0));
+        res.setSoPhongCon(soPhongCon);
         res.setConPhong(soPhongCon > 0);
+
+        // hình ảnh
+        res.setHinhAnhBaiDang(
+                post.getHinhAnh()
+                        .stream()
+                        .map(HinhAnh::getImageUrl)
+                        .toList()
+        );
+
         return res;
     }
+
 
 
     @Transactional
@@ -122,6 +195,9 @@ public class DatPhongService {
 
         KhachHang khachHang = khachHangRepository
                 .findByTaiKhoan_Id(userId);
+        if (khachHang.getCCCD() == null || khachHang.getCCCD().isEmpty()) {
+            throw new RuntimeException("Vui lòng cập nhật số CCCD/CMND trước khi đặt phòng");
+        }
 
         List<Phong> availableRooms = findAvailableRooms(
                 baiDang.getLoaiPhong().getId(),
@@ -135,10 +211,18 @@ public class DatPhongService {
         if (req.getSoLuongPhongDat() <= 0) {
             throw new RuntimeException("Số lượng phòng đặt phải lớn hơn 0");
         }
-        if (khachHang.getCCCD() == null || khachHang.getCCCD().isEmpty()) {
-            throw new RuntimeException("Vui lòng cập nhật số CCCD/CMND trước khi đặt phòng");
+
+        if (req.getSoNguoiLon() > baiDang.getLoaiPhong().getSoNguoiLon()
+                || req.getSoTreEm() > baiDang.getLoaiPhong().getSoTreEm()) {
+            throw new RuntimeException("Số người vượt quá sức chứa phòng");
         }
 
+        if (!req.getNgayNhan().isBefore(req.getNgayTra())) {
+            throw new RuntimeException("Ngày nhận phải trước ngày trả");
+        }
+
+
+        PhienLuuTru phien = phienLuuTruService.taoPhienChoKhach(khachHang);
         List<ChiTietDatPhong> result = new ArrayList<>();
 
         for (int i = 0; i < req.getSoLuongPhongDat(); i++) {
@@ -155,11 +239,10 @@ public class DatPhongService {
             booking.setGhiChu(req.getGhiChu());
             booking.setTrangThai(TrangThaiDatPhong.CHO_XAC_NHAN);
 
+            booking.setPhienLuuTru(phien);
+            phien.getDatPhongs().add(booking);
+
             datPhongRepository.save(booking);
-
-//            phong.setTrangThaiPhong(TrangThaiPhong.DA_DAT);
-//            phongRepository.save(phong);
-
             result.add(booking);
         }
 
@@ -275,7 +358,7 @@ public class DatPhongService {
         datPhongRepository.save(b);
 
         // 2. Render hợp đồng thuê (PDF)
-        byte[] hopDongPdf = bookingDocumentService.generateHopDongPdf(b);
+        byte[] hopDongPdf = documentService.generateHopDongPdf(b);
 
         // 3. Sinh QR khóa phòng
         QrKhoaPhong qr = qrService.generateQrForBooking(b);
@@ -298,13 +381,10 @@ public class DatPhongService {
         }
 
         b.getQrs().forEach(qrService::invalidateQr);
-        b.setTrangThai(TrangThaiDatPhong.DA_TRA_PHONG);
         b.getPhong().setTrangThaiPhong(TrangThaiPhong.TRONG);
+        b.setTrangThai(TrangThaiDatPhong.DA_TRA_PHONG);
 
-        b.getPhong().getLoaiPhong().setSoLuongCon(
-                b.getPhong().getLoaiPhong().getSoLuongCon() + 1
-        );
-
+        phienLuuTruService.kiemTraDongPhien(b.getPhienLuuTru());
 
         phongRepository.save(b.getPhong());
         datPhongRepository.save(b);
@@ -323,9 +403,10 @@ public class DatPhongService {
         b.getPhong().setTrangThaiPhong(TrangThaiPhong.TRONG);
         b.setTrangThai(TrangThaiDatPhong.DA_HUY);
 
+        phienLuuTruService.kiemTraDongPhien(b.getPhienLuuTru());
+
         phongRepository.save(b.getPhong());
         datPhongRepository.save(b);
     }
-
 
 }

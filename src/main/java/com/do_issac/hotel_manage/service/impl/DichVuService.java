@@ -1,22 +1,27 @@
 package com.do_issac.hotel_manage.service.impl;
 
 import com.do_issac.hotel_manage.dto.request.DichVuRequest;
+import com.do_issac.hotel_manage.dto.request.SuDungDichVuRequest;
 import com.do_issac.hotel_manage.dto.response.DichVuResponse;
-import com.do_issac.hotel_manage.entity.DichVu;
-import com.do_issac.hotel_manage.entity.KhachSan;
-import com.do_issac.hotel_manage.entity.TrangThaiKhachSan;
+import com.do_issac.hotel_manage.entity.*;
 import com.do_issac.hotel_manage.mapper.DichVuMapper;
 import com.do_issac.hotel_manage.repository.DichVuRepository;
 import com.do_issac.hotel_manage.repository.KhachSanRepository;
+import com.do_issac.hotel_manage.repository.PhienLuuTruRepository;
+import com.do_issac.hotel_manage.repository.SuDungDichVuRepository;
 import com.do_issac.hotel_manage.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class DichVuService {
+    private final PhienLuuTruRepository phienRepo;
+    private final SuDungDichVuRepository suDungDichVuRepo;
 
     private final KhachSanRepository khachSanRepository;
     private final DichVuRepository dichVuRepository;
@@ -96,4 +101,44 @@ public class DichVuService {
 
         return ApiResponse.success("Chi tiết dịch vụ", dichVuMapper.toResponse(dv));
     }
+
+    public ApiResponse<?> getDichVuChoKhachDangO(Long userId) {
+        PhienLuuTru phien = phienRepo
+                .findByKhachHang_TaiKhoan_IdAndTrangThai(userId, TrangThaiPhien.MO)
+                .orElseThrow(() -> new RuntimeException("Bạn chưa có phiên lưu trú"));
+
+        // Lấy 1 booking bất kỳ để suy ra khách sạn
+        KhachSan ks = phien.getDatPhongs()
+                .get(0)
+                .getPhong()
+                .getKhachSan();
+
+        return ApiResponse.success(
+                "Danh sách dịch vụ",
+                dichVuMapper.toResponseList(ks.getDichVus())
+        );
+    }
+
+    @Transactional
+    public ApiResponse<?> suDungDichVu(Long userId, SuDungDichVuRequest req) {
+
+        PhienLuuTru phien = phienRepo
+                .findByKhachHang_TaiKhoan_IdAndTrangThai(userId, TrangThaiPhien.MO)
+                .orElseThrow(() -> new RuntimeException("Bạn chưa có phiên lưu trú"));
+
+        DichVu dv = dichVuRepository.findById(req.getDichVuId())
+                .orElseThrow(() -> new RuntimeException("Dịch vụ không tồn tại"));
+
+        SuDungDichVu sd = new SuDungDichVu();
+        sd.setPhienLuuTru(phien);
+        sd.setDichVu(dv);
+        sd.setSoLuong(req.getSoLuong());
+        sd.setDonGiaTaiThoiDiem(dv.getDonGia());
+        sd.setThoiDiemSuDung(LocalDateTime.now());
+
+        suDungDichVuRepo.save(sd);
+
+        return ApiResponse.success("Đã ghi nhận sử dụng dịch vụ", null);
+    }
+
 }

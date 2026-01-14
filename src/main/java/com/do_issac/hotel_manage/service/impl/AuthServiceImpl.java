@@ -13,6 +13,7 @@ import com.do_issac.hotel_manage.model.CustomUserDetails;
 import com.do_issac.hotel_manage.repository.KhachHangRepository;
 import com.do_issac.hotel_manage.repository.TaiKhoanRepository;
 import com.do_issac.hotel_manage.service.AuthService;
+import com.do_issac.hotel_manage.util.CccdCryptoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final JwtTokenProvider jwtProvider;
     private final KhachHangRepository khachHangRepository;
+    private final CccdCryptoUtil cccdCryptoUtil;
 
 
     @Override
@@ -79,9 +81,12 @@ public class AuthServiceImpl implements AuthService {
 
         // 2. Nếu là khách hàng → tạo KhachHang
         if (request.getVaiTro() == VaiTro.KHACH_HANG) {
+            String encryptedCccd = cccdCryptoUtil.encrypt(request.getCccd());
 
             KhachHang kh = new KhachHang();
             kh.setTaiKhoan(tk);
+            kh.setCCCD(encryptedCccd);
+            kh.setNgayXacThucCCCD(LocalDateTime.now());
 
             khachHangRepository.save(kh);
 

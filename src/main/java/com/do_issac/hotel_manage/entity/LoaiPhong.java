@@ -23,9 +23,6 @@ public class LoaiPhong {
     private int soTreEm;
 
     @OneToMany(mappedBy = "loaiPhong")
-    private List<ChiTietHoaDon> chiTietHoaDons;
-
-    @OneToMany(mappedBy = "loaiPhong")
     private List<Phong> phongs;
 
     @ManyToMany(mappedBy = "loaiPhongs")

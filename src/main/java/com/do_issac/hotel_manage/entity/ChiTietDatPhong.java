@@ -38,9 +38,9 @@ public class ChiTietDatPhong {
     @JoinColumn(name = "khachHangId", nullable = false)
     private KhachHang khachHang;
 
-    @OneToOne
-    @JoinColumn(name = "hoaDonId")
-    private HoaDon hoaDon;
+    @ManyToOne
+    @JoinColumn(name = "phienLuuTruId")
+    private PhienLuuTru phienLuuTru;
 
     @OneToMany(mappedBy = "datPhong")
     private List<QrKhoaPhong> qrs;

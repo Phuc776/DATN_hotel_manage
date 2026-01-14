@@ -27,6 +27,7 @@ public class PhongService {
     private final NhanVienRepository nhanVienRepository;
     private final QRKhoaPhongRepository qrRepo;
     private final ChiTietDatPhongRepository datPhongRepository;
+    private final PhienLuuTruService phienLuuTruService;
 
     private final QrJwtProvider qrJwtProvider;
 
@@ -225,6 +226,8 @@ public class PhongService {
 
             datPhongRepository.save(b);
             phongRepository.save(phong);
+
+            phienLuuTruService.moPhien(b);
         } else {
             throw new RuntimeException("Booking không hợp lệ để mở cửa");
         }

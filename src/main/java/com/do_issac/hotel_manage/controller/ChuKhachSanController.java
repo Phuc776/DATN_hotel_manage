@@ -7,6 +7,9 @@ import com.do_issac.hotel_manage.service.impl.*;
 import com.do_issac.hotel_manage.util.ApiResponse;
 import com.do_issac.hotel_manage.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +23,7 @@ public class ChuKhachSanController {
     private final NhanVienService nhanVienService;
     private final BaiDangPhongService baiDangPhongService;
     private final PhongService phongService;
+    private final HoaDonService hoaDonService;
     private final NotificationQueryService notificationQueryService;
 
     @GetMapping("/thong-bao")
@@ -213,5 +217,32 @@ public class ChuKhachSanController {
     public ApiResponse<?> getPhongDetail(@PathVariable Long id) {
         Long userId = authUtil.getCurrentUserId();
         return phongService.getRoomById(userId, id);
+    }
+
+    @GetMapping("/hoa-don")
+    public ApiResponse<?> getAllHoaDon() {
+        Long userId = authUtil.getCurrentUserId();
+        return hoaDonService.xemDanhSachHoaDonChuKhachSan(userId);
+    }
+
+    @GetMapping("/hoa-don/{id}")
+    public ApiResponse<?> getHoaDonDetail(@PathVariable Long id) {
+        Long userId = authUtil.getCurrentUserId();
+        return hoaDonService.xemHoaDonChuKhachSan(id, userId);
+    }
+
+    @GetMapping("/hoa-don/{id}/pdf")
+    public ResponseEntity<byte[]> downloadHoaDonPdf(
+            @PathVariable Long id) {
+        Long userId = authUtil.getCurrentUserId();
+        byte[] pdf = hoaDonService
+                .taiHoaDonPdfChoChuKhachSan(id, userId);
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=hoa-don-" + id + ".pdf"
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 }

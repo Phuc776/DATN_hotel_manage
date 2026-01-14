@@ -54,4 +54,34 @@ public class EmailService {
             throw new RuntimeException("Không thể gửi email xác nhận nhận phòng", e);
         }
     }
+
+    public void sendHoaDonEmail(String to, byte[] hoaDonPdf) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject("Hóa đơn lưu trú");
+            helper.setText("""
+                Xin chào,
+
+                Phiên lưu trú của quý khách đã kết thúc.
+                Vui lòng xem hóa đơn đính kèm.
+
+                Xin cảm ơn và hẹn gặp lại.
+                """);
+
+            helper.addAttachment(
+                    "hoa-don-luu-tru.pdf",
+                    new ByteArrayResource(hoaDonPdf)
+            );
+
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Không thể gửi email hóa đơn", e);
+        }
+    }
+
 }

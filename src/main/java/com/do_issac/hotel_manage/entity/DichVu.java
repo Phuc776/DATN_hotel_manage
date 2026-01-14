@@ -19,9 +19,7 @@ public class DichVu {
     private String tenDichVu;
     private double donGia;
     private String moTa;
-
-    @OneToMany(mappedBy = "dichVu")
-    private List<ChiTietHoaDon> chiTietHoaDons;
+    private String hinhAnhUrl;
 
     @ManyToMany(mappedBy = "dichVus")
     private List<KhachSan> khachSans;

@@ -18,9 +18,16 @@ public class ThanhToan {
 
     private double soTien;
     private String phuongThuc;
+
+    private String maGiaoDich; // vnp_TxnRef
+
     private LocalDateTime ngayThanhToan;
 
+    @Enumerated(EnumType.STRING)
+    private TrangThaiThanhToan trangThai;
+
+
     @ManyToOne
-    @JoinColumn(name = "hoaDonId", nullable = false)
-    private HoaDon hoaDon;
+    @JoinColumn(name = "phienLuuTruId", nullable = false)
+    private PhienLuuTru phienLuuTru;
 }

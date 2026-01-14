@@ -17,4 +17,6 @@ public class RegisterRequest {
     private String hoTen;
     @NotBlank
     private String soDienThoai;
+
+    private String cccd;
 }

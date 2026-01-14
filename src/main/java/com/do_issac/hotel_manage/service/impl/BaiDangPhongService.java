@@ -1,11 +1,13 @@
 package com.do_issac.hotel_manage.service.impl;
 
 import com.do_issac.hotel_manage.dto.request.BaiDangPhongRequest;
+import com.do_issac.hotel_manage.dto.request.KiemTraPhongTrongRequest;
 import com.do_issac.hotel_manage.dto.response.BaiDangPhongResponse;
 import com.do_issac.hotel_manage.entity.*;
 import com.do_issac.hotel_manage.mapper.BaiDangPhongMapper;
 import com.do_issac.hotel_manage.repository.*;
 import com.do_issac.hotel_manage.util.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -331,4 +333,6 @@ public class BaiDangPhongService {
                 })
                 .toList();
     }
+
+
 }
